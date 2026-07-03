@@ -1,0 +1,334 @@
+{% extends 'voting/base.html' %}
+{% load static %}
+
+{% block title %}Vote Now - Online Voting System{% endblock %}
+{% block body_class %}voting-page{% endblock %}
+
+{% block content %}
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark voting-navbar">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="{% url 'voting:voting_page' %}">
+            <i class="fas fa-vote-yea me-2"></i>VoteHub
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navContent">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'voting:voting_page' %}"><i class="fas fa-home me-1"></i> Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'voting:result_page' %}"><i class="fas fa-chart-bar me-1"></i> Results</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'voting:admin_login' %}"><i class="fas fa-lock me-1"></i> Admin</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="voting-hero">
+    <div class="container text-center">
+        <h1 class="display-5 fw-bold mb-3">Cast Your Vote</h1>
+        <p class="lead mb-0">Your voice matters. Choose your candidate below.</p>
+        <div class="mt-3">
+            <span class="badge bg-light text-dark fs-6">
+                <i class="fas fa-users me-1"></i> {{ candidates|length }} Candidate{{ candidates|length|pluralize }}
+            </span>
+        </div>
+    </div>
+</section>
+
+<!-- Voter ID Verification Section -->
+<section class="py-4">
+    <div class="container">
+        <div class="glass-card mx-auto" style="max-width: 600px;">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3"><i class="fas fa-fingerprint me-2 text-primary"></i>Voter Verification</h5>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">ID Type</label>
+                        <select id="voterIdType" class="form-select">
+                            <option value="student_id">Student ID</option>
+                            <option value="mobile">Mobile Number</option>
+                            <option value="voter_id">Voter ID</option>
+                        </select>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="form-label">Your ID</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                            <input type="text" id="voterIdValue" class="form-control" placeholder="Enter your ID">
+                            <button class="btn btn-outline-primary" type="button" id="checkStatusBtn">
+                                <i class="fas fa-check"></i> Check
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div id="voterStatus" class="mt-3" style="display:none;"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Candidates Section -->
+<section class="py-4">
+    <div class="container">
+        <h4 class="text-center fw-bold mb-4"><i class="fas fa-users me-2"></i>Candidates</h4>
+        <div class="row g-4" id="candidatesContainer">
+            {% for candidate in candidates %}
+            <div class="col-lg-4 col-md-6 candidate-card-wrapper">
+                <div class="candidate-card glass-card h-100">
+                    <div class="candidate-card-img">
+                        {% if candidate.photo %}
+                        <img src="{{ candidate.photo.url }}" alt="{{ candidate.name }}" class="candidate-photo"
+                             onclick="openVoteModal('{{ candidate.pk }}', '{{ candidate.name }}', '{{ candidate.photo.url }}', '{{ candidate.symbol.url|default:'' }}', '{{ candidate.party|default:'' }}')">
+                        {% else %}
+                        <div class="candidate-photo-placeholder" onclick="openVoteModal('{{ candidate.pk }}', '{{ candidate.name }}', '', '', '{{ candidate.party|default:'' }}')">
+                            <i class="fas fa-user fa-3x"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="candidate-card-body text-center">
+                        {% if candidate.symbol %}
+                        <img src="{{ candidate.symbol.url }}" alt="Symbol" class="candidate-symbol mb-2">
+                        {% endif %}
+                        <h5 class="fw-bold mb-1">{{ candidate.name }}</h5>
+                        {% if candidate.party %}
+                        <p class="text-muted mb-2">{{ candidate.party }}</p>
+                        {% endif %}
+                        <span class="badge bg-primary mb-3">{{ candidate.position }}</span>
+                        <button class="btn btn-primary btn-glow w-100 vote-btn"
+                                onclick="openVoteModal('{{ candidate.pk }}', '{{ candidate.name }}', '{{ candidate.photo.url|default:'' }}', '{{ candidate.symbol.url|default:'' }}', '{{ candidate.party|default:'' }}')">
+                            <i class="fas fa-vote-yea me-2"></i>Vote
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No candidates available</h5>
+                <p class="text-muted">Please check back later.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="voting-footer">
+    <div class="container text-center">
+        <p class="mb-0">&copy; 2026 Online Voting System. All rights reserved.</p>
+    </div>
+</footer>
+
+<!-- Vote Confirmation Modal -->
+<div class="modal fade" id="voteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass-card">
+            <div class="modal-header border-0 text-center">
+                <h5 class="modal-title w-100">
+                    <i class="fas fa-vote-yea text-primary me-2"></i>Confirm Your Vote
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div class="mb-3" id="modalCandidatePhoto"></div>
+                <div id="modalCandidateSymbol" class="mb-2"></div>
+                <h5 class="fw-bold" id="modalCandidateName"></h5>
+                <p class="text-muted" id="modalCandidateParty"></p>
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Are you sure? This action cannot be undone.
+                </div>
+                <input type="hidden" id="modalCandidateId">
+            </div>
+            <div class="modal-footer border-0 justify-content-center">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i> Cancel
+                </button>
+                <button type="button" class="btn btn-primary btn-glow" id="confirmVoteBtn" onclick="submitVote()">
+                    <i class="fas fa-check me-1"></i> Confirm Vote
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass-card">
+            <div class="modal-body text-center py-5">
+                <div class="success-animation mb-3">
+                    <i class="fas fa-check-circle text-success fa-5x"></i>
+                </div>
+                <h3 class="fw-bold text-success mb-2">Thank You!</h3>
+                <p class="text-muted mb-0">Your vote has been recorded successfully.</p>
+                <p class="text-muted">You voted for: <strong id="successCandidateName"></strong></p>
+                <button type="button" class="btn btn-primary btn-glow mt-3" data-bs-dismiss="modal">
+                    <i class="fas fa-home me-1"></i> Back to Home
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Already Voted Modal -->
+<div class="modal fade" id="alreadyVotedModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass-card">
+            <div class="modal-body text-center py-5">
+                <i class="fas fa-ban text-danger fa-5x mb-3"></i>
+                <h3 class="fw-bold text-danger mb-2">Already Voted</h3>
+                <p class="text-muted">You have already cast your vote.</p>
+                <button type="button" class="btn btn-secondary mt-3" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Spinner -->
+<div class="loading-overlay" id="loadingOverlay" style="display:none;">
+    <div class="spinner-wrapper">
+        <div class="spinner-border text-primary" style="width:3rem;height:3rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-3 text-white fw-semibold">Processing your vote...</p>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let voterVerified = false;
+
+    // Check vote status
+    document.getElementById('checkStatusBtn').addEventListener('click', function() {
+        const voterId = document.getElementById('voterIdValue').value.trim();
+        if (!voterId) {
+            showVoterStatus('Please enter your ID.', 'warning');
+            return;
+        }
+
+        $.post("{% url 'voting:check_vote_status' %}", {
+            'voter_id': voterId,
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        }, function(data) {
+            if (data.has_voted) {
+                showVoterStatus('You have already voted for ' + data.voted_for + '.', 'danger');
+                voterVerified = false;
+            } else {
+                showVoterStatus('ID verified. You can vote now!', 'success');
+                voterVerified = true;
+            }
+        });
+    });
+
+    function showVoterStatus(message, type) {
+        const el = document.getElementById('voterStatus');
+        el.style.display = 'block';
+        el.innerHTML = '<div class="alert alert-' + type + ' mb-0"><i class="fas fa-' +
+            (type === 'success' ? 'check-circle' : type === 'danger' ? 'ban' : 'exclamation-triangle') +
+            ' me-2"></i>' + message + '</div>';
+    }
+
+    // Open vote confirmation modal
+    function openVoteModal(id, name, photo, symbol, party) {
+        const voterId = document.getElementById('voterIdValue').value.trim();
+        if (!voterId) {
+            showToast('Please enter your Voter ID first.', 'warning');
+            document.getElementById('voterIdValue').focus();
+            return;
+        }
+
+        if (!voterVerified) {
+            showToast('Please verify your ID first by clicking Check.', 'warning');
+            return;
+        }
+
+        document.getElementById('modalCandidateId').value = id;
+        document.getElementById('modalCandidateName').textContent = name;
+        document.getElementById('modalCandidateParty').textContent = party || '';
+
+        if (photo) {
+            document.getElementById('modalCandidatePhoto').innerHTML =
+                '<img src="' + photo + '" alt="' + name + '" style="width:80px;height:80px;border-radius:50%;object-fit:cover;">';
+        } else {
+            document.getElementById('modalCandidatePhoto').innerHTML =
+                '<div style="width:80px;height:80px;border-radius:50%;background:#e2e8f0;display:inline-flex;align-items:center;justify-content:center;"><i class="fas fa-user fa-2x text-muted"></i></div>';
+        }
+
+        if (symbol) {
+            document.getElementById('modalCandidateSymbol').innerHTML =
+                '<img src="' + symbol + '" alt="Symbol" style="max-width:40px;">';
+        } else {
+            document.getElementById('modalCandidateSymbol').innerHTML = '';
+        }
+
+        new bootstrap.Modal(document.getElementById('voteModal')).show();
+    }
+
+    // Submit vote via AJAX
+    function submitVote() {
+        const candidateId = document.getElementById('modalCandidateId').value;
+        const voterId = document.getElementById('voterIdValue').value.trim();
+        const voterIdType = document.getElementById('voterIdType').value;
+
+        // Close vote modal
+        bootstrap.Modal.getInstance(document.getElementById('voteModal')).hide();
+
+        // Show loading
+        document.getElementById('loadingOverlay').style.display = 'flex';
+
+        $.post("{% url 'voting:cast_vote' %}", {
+            'candidate_id': candidateId,
+            'voter_id': voterId,
+            'voter_id_type': voterIdType,
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        }, function(data) {
+            document.getElementById('loadingOverlay').style.display = 'none';
+            if (data.success) {
+                document.getElementById('successCandidateName').textContent = data.candidate_name;
+                new bootstrap.Modal(document.getElementById('successModal')).show();
+                showToast('Vote recorded successfully!', 'success');
+            }
+        }).fail(function(xhr) {
+            document.getElementById('loadingOverlay').style.display = 'none';
+            const msg = xhr.responseJSON ? xhr.responseJSON.message : 'Error casting vote.';
+            if (msg === 'You have already voted.') {
+                new bootstrap.Modal(document.getElementById('alreadyVotedModal')).show();
+            } else {
+                showToast(msg, 'danger');
+            }
+        });
+    }
+
+    // Toast notification
+    function showToast(message, type) {
+        const toastHtml = `
+            <div class="toast align-items-center text-bg-${type} border-0 show" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body">${message}</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        `;
+        document.getElementById('toastContainer').insertAdjacentHTML('beforeend', toastHtml);
+        setTimeout(function() {
+            const toasts = document.querySelectorAll('#toastContainer .toast');
+            if (toasts.length) toasts[toasts.length - 1].remove();
+        }, 4000);
+    }
+</script>
+{% endblock %}

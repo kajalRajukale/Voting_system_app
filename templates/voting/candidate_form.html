@@ -1,0 +1,154 @@
+{% extends 'voting/admin_base.html' %}
+{% load static %}
+
+{% block title %}{{ action }} Candidate - Voting System{% endblock %}
+
+{% block page_content %}
+<div class="mb-4">
+    <h4 class="fw-bold">
+        <i class="fas fa-{% if action == 'Add' %}user-plus{% else %}user-edit{% endif %} me-2 text-primary"></i>
+        {{ action }} Candidate
+    </h4>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'voting:admin_dashboard' %}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'voting:candidate_list' %}">Candidates</a></li>
+            <li class="breadcrumb-item active">{{ action }} Candidate</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="glass-card">
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        Please correct the errors below.
+                        {% for field, errors in form.errors.items %}
+                            {% for error in errors %}
+                            <br><small>- {{ field }}: {{ error }}</small>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Full Name *</label>
+                            {{ form.name }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Position *</label>
+                            {{ form.position }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Party Name</label>
+                            {{ form.party }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Status *</label>
+                            {{ form.status }}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Description</label>
+                            {{ form.description }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Photo</label>
+                            {{ form.photo }}
+                            <div class="mt-2">
+                                <img id="photoPreview" src="{% if candidate and candidate.photo %}{{ candidate.photo.url }}{% endif %}"
+                                     alt="Preview" class="img-preview rounded" style="display: {% if candidate and candidate.photo %}block{% else %}none{% endif %};">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Election Symbol</label>
+                            {{ form.symbol }}
+                            <div class="mt-2">
+                                <img id="symbolPreview" src="{% if candidate and candidate.symbol %}{{ candidate.symbol.url }}{% endif %}"
+                                     alt="Preview" class="img-preview rounded" style="display: {% if candidate and candidate.symbol %}block{% else %}none{% endif %};">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 d-flex gap-3">
+                        <button type="submit" class="btn btn-primary btn-glow">
+                            <i class="fas fa-save me-2"></i>{{ action }} Candidate
+                        </button>
+                        <a href="{% url 'voting:candidate_list' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview Card -->
+    <div class="col-lg-4">
+        <div class="glass-card">
+            <div class="card-header bg-transparent border-0">
+                <h6 class="fw-bold"><i class="fas fa-eye me-2"></i>Preview</h6>
+            </div>
+            <div class="card-body text-center">
+                <div class="candidate-preview-avatar mb-3">
+                    <img id="previewPhoto" src="{% if candidate and candidate.photo %}{{ candidate.photo.url }}{% endif %}"
+                         alt="Photo" style="display: {% if candidate and candidate.photo %}block{% else %}none{% endif %};">
+                    <i class="fas fa-user fa-3x text-muted" id="previewPhotoPlaceholder" style="display: {% if candidate and candidate.photo %}none{% else %}block{% endif %};"></i>
+                </div>
+                <h5 id="previewName">{{ candidate.name|default:"Candidate Name" }}</h5>
+                <p class="text-muted mb-1" id="previewPosition">{{ candidate.position|default:"Position" }}</p>
+                <p class="text-muted" id="previewParty">{{ candidate.party|default:"Party" }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Image preview
+    document.getElementById('id_photo')?.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                document.getElementById('photoPreview').src = ev.target.result;
+                document.getElementById('photoPreview').style.display = 'block';
+                document.getElementById('previewPhoto').src = ev.target.result;
+                document.getElementById('previewPhoto').style.display = 'block';
+                document.getElementById('previewPhotoPlaceholder').style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    document.getElementById('id_symbol')?.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                document.getElementById('symbolPreview').src = ev.target.result;
+                document.getElementById('symbolPreview').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Live preview updates
+    document.getElementById('id_name')?.addEventListener('input', function() {
+        document.getElementById('previewName').textContent = this.value || 'Candidate Name';
+    });
+    document.getElementById('id_position')?.addEventListener('input', function() {
+        document.getElementById('previewPosition').textContent = this.value || 'Position';
+    });
+    document.getElementById('id_party')?.addEventListener('input', function() {
+        document.getElementById('previewParty').textContent = this.value || 'Party';
+    });
+</script>
+{% endblock %}

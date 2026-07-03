@@ -1,0 +1,190 @@
+{% extends 'voting/admin_base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - Voting System{% endblock %}
+
+{% block page_content %}
+<div class="mb-4">
+    <h4 class="fw-bold"><i class="fas fa-tachometer-alt me-2 text-primary"></i>Dashboard</h4>
+    <p class="text-muted mb-0">Overview of the voting system</p>
+</div>
+
+<!-- Stats Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card glass-card">
+            <div class="stat-icon bg-primary">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ total_candidates }}</h3>
+                <p>Total Candidates</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card glass-card">
+            <div class="stat-icon bg-success">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ total_votes }}</h3>
+                <p>Total Votes</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card glass-card">
+            <div class="stat-icon bg-info">
+                <i class="fas fa-calendar-day"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ today_votes }}</h3>
+                <p>Today's Votes</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card glass-card">
+            <div class="stat-icon bg-warning">
+                <i class="fas fa-hourglass-half"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ remaining_votes }}</h3>
+                <p>Remaining Votes</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <!-- Winner Card -->
+    <div class="col-lg-4">
+        <div class="glass-card h-100">
+            <div class="card-header bg-transparent border-0 pb-0">
+                <h6 class="fw-bold mb-0"><i class="fas fa-trophy text-warning me-2"></i>Current Leader</h6>
+            </div>
+            <div class="card-body text-center">
+                <div class="winner-avatar mb-3">
+                    <i class="fas fa-crown text-warning"></i>
+                </div>
+                <h5 class="fw-bold">{{ winner_name }}</h5>
+                <span class="badge bg-primary fs-6">{{ winner_votes }} votes</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Latest Vote -->
+    <div class="col-lg-4">
+        <div class="glass-card h-100">
+            <div class="card-header bg-transparent border-0 pb-0">
+                <h6 class="fw-bold mb-0"><i class="fas fa-clock text-info me-2"></i>Latest Vote</h6>
+            </div>
+            <div class="card-body">
+                {% if latest_vote %}
+                <div class="d-flex align-items-center gap-3">
+                    <div class="latest-vote-icon">
+                        <i class="fas fa-vote-yea text-success"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-0">{{ latest_vote.candidate.name }}</h6>
+                        <small class="text-muted">by {{ latest_vote.voter_id }}</small>
+                        <br><small class="text-muted"><i class="fas fa-clock me-1"></i>{{ latest_vote.vote_time|date:"M d, Y H:i" }}</small>
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center text-muted py-3">
+                    <i class="fas fa-inbox fa-2x mb-2"></i>
+                    <p>No votes yet</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Vote Counter -->
+    <div class="col-lg-4">
+        <div class="glass-card h-100">
+            <div class="card-header bg-transparent border-0 pb-0 d-flex justify-content-between align-items-center">
+                <h6 class="fw-bold mb-0"><i class="fas fa-bolt text-warning me-2"></i>Live Counter</h6>
+                <span class="badge bg-success blink-badge">LIVE</span>
+            </div>
+            <div class="card-body" id="liveCounterSection">
+                <div class="text-center py-3">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row g-4">
+    <div class="col-12">
+        <div class="glass-card">
+            <div class="card-header bg-transparent border-0">
+                <h6 class="fw-bold mb-0"><i class="fas fa-bolt text-primary me-2"></i>Quick Actions</h6>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="{% url 'voting:candidate_add' %}" class="btn btn-primary btn-glow">
+                        <i class="fas fa-user-plus me-2"></i>Add Candidate
+                    </a>
+                    <a href="{% url 'voting:candidate_list' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-users me-2"></i>View Candidates
+                    </a>
+                    <a href="{% url 'voting:result_page' %}" class="btn btn-outline-success">
+                        <i class="fas fa-chart-bar me-2"></i>View Results
+                    </a>
+                    <a href="{% url 'voting:voting_page' %}" class="btn btn-outline-info" target="_blank">
+                        <i class="fas fa-vote-yea me-2"></i>Public Voting
+                    </a>
+                    <a href="{% url 'voting:report_pdf' %}" class="btn btn-outline-danger">
+                        <i class="fas fa-file-pdf me-2"></i>PDF Report
+                    </a>
+                    <a href="{% url 'voting:report_excel' %}" class="btn btn-outline-success">
+                        <i class="fas fa-file-excel me-2"></i>Excel Report
+                    </a>
+                    <a href="{% url 'voting:report_csv' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-file-csv me-2"></i>CSV Report
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Live vote counter auto-refresh
+    function loadLiveCounter() {
+        $.get("{% url 'voting:live_vote_counter' %}", function(data) {
+            let html = '';
+            if (data.candidates.length === 0) {
+                html = '<div class="text-center text-muted py-3"><p>No candidates yet</p></div>';
+            } else {
+                data.candidates.forEach(function(c) {
+                    html += `
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="fw-semibold">${c.name}</span>
+                                <span class="text-muted">${c.votes} votes (${c.percentage}%)</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-primary" style="width: ${c.percentage}%"></div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            $('#liveCounterSection').html(html);
+        });
+    }
+
+    loadLiveCounter();
+    setInterval(loadLiveCounter, 10000);
+</script>
+{% endblock %}

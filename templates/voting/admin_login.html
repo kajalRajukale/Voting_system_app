@@ -1,0 +1,52 @@
+{% extends 'voting/base.html' %}
+{% load static %}
+
+{% block title %}Admin Login - Voting System{% endblock %}
+{% block body_class %}login-page{% endblock %}
+
+{% block content %}
+<div class="login-wrapper">
+    <div class="login-card glass-card">
+        <div class="login-header">
+            <div class="login-icon">
+                <i class="fas fa-vote-yea"></i>
+            </div>
+            <h2>Admin Login</h2>
+            <p class="text-muted">Sign in to manage the voting system</p>
+        </div>
+
+        {% if form.errors %}
+        <div class="alert alert-danger alert-dismissible fade show">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            Invalid username or password.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endif %}
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="id_username" class="form-label">
+                    <i class="fas fa-user me-1"></i> Username
+                </label>
+                {{ form.username }}
+            </div>
+            <div class="mb-4">
+                <label for="id_password" class="form-label">
+                    <i class="fas fa-lock me-1"></i> Password
+                </label>
+                {{ form.password }}
+            </div>
+            <button type="submit" class="btn btn-primary w-100 btn-glow">
+                <i class="fas fa-sign-in-alt me-2"></i> Sign In
+            </button>
+        </form>
+
+        <div class="login-footer mt-4 text-center">
+            <a href="{% url 'voting:voting_page' %}" class="text-muted text-decoration-none">
+                <i class="fas fa-arrow-left me-1"></i> Back to Voting Page
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

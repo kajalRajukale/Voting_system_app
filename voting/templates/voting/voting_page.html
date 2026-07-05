@@ -1,0 +1,189 @@
+{% extends "voting/base.html" %}
+{% load static %}
+
+{% block title %}Digital Voting Machine - Sumati Balwan School{% endblock %}
+{% block body_class %}evm-body{% endblock %}
+
+{% block content %}
+<div class="evm-container">
+    <header class="evm-header">
+        <div class="header-glow"></div>
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-auto">
+                    <div class="school-logo">
+                        <i class="fas fa-landmark"></i>
+                    </div>
+                </div>
+                <div class="col">
+                    <h1 class="school-name">SUMATI BALWAN SCHOOL</h1>
+                    <p class="system-name">DIGITAL VOTING MACHINE</p>
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-evm-outline" onclick="toggleFullscreen()" title="Fullscreen">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="evm-progress-bar">
+        <div class="progress-fill" style="width: {% widthratio total_votes total_students 100 %}%"></div>
+        <span class="progress-text">{{ total_votes }} / {{ total_students }} VOTES</span>
+    </div>
+
+    <main class="evm-main">
+        <div id="voting-section" class="{% if is_locked %}d-none{% endif %}">
+            <div class="evm-instruction">
+                <div class="instruction-pulse"></div>
+                <span>TOUCH A SYMBOL TO CAST YOUR VOTE</span>
+            </div>
+            <div class="symbols-grid">
+                {% for symbol in symbols %}
+                <div class="symbol-card" data-id="{{ symbol.id }}" data-name="{{ symbol.name }}"
+                     onclick="castVote({{ symbol.id }}, '{{ symbol.name }}', '{% static symbol.image %}')">
+                    <div class="symbol-glow"></div>
+                    <div class="symbol-img-wrapper">
+                        <img src="{% static symbol.image %}" alt="{{ symbol.name }}" class="symbol-img" draggable="false">
+                    </div>
+                    <span class="symbol-name">{{ symbol.name }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div id="locked-section" class="{% if not is_locked %}d-none{% endif %}">
+            <div class="locked-screen">
+                <div class="success-animation">
+                    <div class="checkmark-circle">
+                        <i class="fas fa-check"></i>
+                    </div>
+                </div>
+                <h2 class="success-title">YOUR VOTE HAS BEEN RECORDED</h2>
+                <p class="success-subtitle">Thank You</p>
+                <p class="success-instruction">Please Leave</p>
+                <div class="waiting-indicator">
+                    <div class="waiting-dots">
+                        <span></span><span></span><span></span>
+                    </div>
+                    <p>Waiting For Teacher...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="teacher-panel" class="teacher-panel {% if not is_locked %}d-none{% endif %}">
+        <button class="btn btn-next-student" onclick="nextStudent()">
+            <span class="btn-text">NEXT STUDENT</span>
+            <span class="btn-icon"><i class="fas fa-arrow-right"></i></span>
+        </button>
+    </div>
+
+    <footer class="evm-footer">
+        <div class="footer-line"></div>
+        <span>ELECTRONIC VOTING MACHINE v1.0</span>
+    </footer>
+</div>
+
+<div id="vote-animation" class="vote-animation d-none">
+    <div class="animation-content">
+        <div class="ripple"></div>
+        <i class="fas fa-check-circle"></i>
+        <p id="animation-symbol-name"></p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let isVoting = false;
+
+function castVote(id, name, imgUrl) {
+    if (isVoting) return;
+    isVoting = true;
+
+    document.querySelectorAll('.symbol-card').forEach(c => c.classList.add('voting'));
+    document.querySelector('.symbol-card[data-id="' + id + '"]').classList.add('selected');
+
+    $.ajax({
+        url: '{% url "voting:cast_vote" %}',
+        method: 'POST',
+        data: {
+            'symbol_id': id,
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        },
+        success: function(resp) {
+            if (resp.success) {
+                showVoteAnimation(name);
+                setTimeout(function() {
+                    document.getElementById('voting-section').classList.add('d-none');
+                    document.getElementById('locked-section').classList.remove('d-none');
+                    document.getElementById('teacher-panel').classList.remove('d-none');
+                    isVoting = false;
+                }, 1500);
+            }
+        },
+        error: function(xhr) {
+            isVoting = false;
+            document.querySelectorAll('.symbol-card').forEach(c => {
+                c.classList.remove('voting', 'selected');
+            });
+            if (xhr.responseJSON) {
+                alert(xhr.responseJSON.message);
+            }
+        }
+    });
+}
+
+function showVoteAnimation(name) {
+    var anim = document.getElementById('vote-animation');
+    document.getElementById('animation-symbol-name').textContent = name;
+    anim.classList.remove('d-none');
+    anim.classList.add('show');
+    setTimeout(function() {
+        anim.classList.remove('show');
+        anim.classList.add('d-none');
+    }, 1200);
+}
+
+function nextStudent() {
+    $.ajax({
+        url: '{% url "voting:next_student" %}',
+        method: 'POST',
+        data: { 'csrfmiddlewaretoken': '{{ csrf_token }}' },
+        success: function(resp) {
+            if (resp.success) {
+                document.getElementById('locked-section').classList.add('d-none');
+                document.getElementById('teacher-panel').classList.add('d-none');
+                document.getElementById('voting-section').classList.remove('d-none');
+                document.querySelectorAll('.symbol-card').forEach(c => {
+                    c.classList.remove('voting', 'selected');
+                });
+                var totalEl = document.querySelector('.progress-text');
+                if (totalEl) {
+                    var parts = totalEl.textContent.split('/');
+                    var current = parseInt(parts[0].trim()) + 1;
+                    totalEl.textContent = current + ' / ' + parts[1].trim();
+                }
+            }
+        }
+    });
+}
+
+function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+    } else {
+        document.exitFullscreen();
+    }
+}
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'F11') {
+        e.preventDefault();
+        toggleFullscreen();
+    }
+});
+</script>
+{% endblock %}

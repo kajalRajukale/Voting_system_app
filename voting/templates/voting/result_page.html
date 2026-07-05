@@ -1,0 +1,109 @@
+{% extends "voting/base.html" %}
+{% load static %}
+
+{% block title %}Voting Results - Digital Voting Machine{% endblock %}
+{% block body_class %}evm-admin-body{% endblock %}
+
+{% block content %}
+<div class="evm-admin-wrapper">
+    <nav class="evm-sidebar" id="sidebar">
+        <div class="sidebar-brand"><i class="fas fa-landmark"></i><span>EVM Admin</span></div>
+        <ul class="sidebar-menu">
+            <li><a href="{% url 'voting:admin_dashboard' %}"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+            <li><a href="{% url 'voting:result_page' %}" class="active"><i class="fas fa-chart-bar"></i> Results</a></li>
+            <li><a href="{% url 'voting:export_pdf' %}"><i class="fas fa-file-pdf"></i> Export PDF</a></li>
+            <li><a href="{% url 'voting:export_excel' %}"><i class="fas fa-file-excel"></i> Export Excel</a></li>
+            <li><a href="{% url 'voting:print_result' %}" target="_blank"><i class="fas fa-print"></i> Print Result</a></li>
+            <li><a href="{% url 'voting:voting_page' %}"><i class="fas fa-vote-yea"></i> Voting Machine</a></li>
+            <li class="divider"></li>
+            <li><a href="{% url 'voting:admin_logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </nav>
+
+    <main class="evm-main-content">
+        <div class="evm-topbar">
+            <button class="btn btn-sm btn-outline-secondary d-md-none" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+            <h5 class="mb-0">Final Results</h5>
+            <a href="{% url 'voting:voting_page' %}" class="btn btn-sm btn-evm-outline"><i class="fas fa-vote-yea me-1"></i>Voting Machine</a>
+        </div>
+
+        {% if winner %}
+        <div class="winner-banner">
+            <div class="winner-content">
+                <img src="{% static winner.image %}" alt="{{ winner.name }}" class="winner-img">
+                <div>
+                    <h2 class="winner-name">{{ winner.name }}</h2>
+                    <p class="winner-votes">{{ winner.vote_count }} votes | {% widthratio winner.vote_count total_votes 100 %}%</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="row g-3 mb-4" style="padding:0 1.5rem;">
+            <div class="col-md-4"><div class="evm-chart-box"><canvas id="barChart"></canvas></div></div>
+            <div class="col-md-4"><div class="evm-chart-box"><canvas id="pieChart"></canvas></div></div>
+            <div class="col-md-4"><div class="evm-chart-box"><canvas id="doughnutChart"></canvas></div></div>
+        </div>
+
+        <div class="evm-card" style="margin:0 1.5rem 1.5rem;">
+            <div class="evm-card-body">
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover align-middle mb-0">
+                        <thead>
+                            <tr><th>Rank</th><th>Symbol</th><th>Name</th><th>Votes</th><th>Percentage</th><th>Progress</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for item in symbol_data %}
+                            <tr>
+                                <td>
+                                    {% if forloop.counter == 1 %}<span class="badge bg-warning text-dark">1st</span>
+                                    {% elif forloop.counter == 2 %}<span class="badge bg-secondary">2nd</span>
+                                    {% elif forloop.counter == 3 %}<span class="badge bg-info">3rd</span>
+                                    {% else %}{{ forloop.counter }}{% endif %}
+                                </td>
+                                <td><img src="{% static item.symbol.image %}" alt="" style="width:40px;height:40px;"></td>
+                                <td>{{ item.symbol.name }}</td>
+                                <td><strong>{{ item.votes }}</strong></td>
+                                <td>{{ item.percentage }}%</td>
+                                <td style="min-width:150px;">
+                                    <div class="progress" style="height:8px;">
+                                        <div class="progress-bar bg-info" style="width:{{ item.percentage }}%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="6" class="text-center">No results.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-end text-muted mt-2 mb-0">Total Votes: <strong>{{ total_votes }}</strong></p>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+function toggleSidebar() { document.getElementById('sidebar').classList.toggle('show'); }
+
+fetch('{% url "voting:charts_data" %}')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.total_votes === 0) return;
+        var opts = { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#fff' } } } };
+        new Chart(document.getElementById('barChart'), {
+            type: 'bar', data: { labels: data.labels, datasets: [{ label: 'Votes', data: data.votes, backgroundColor: data.colors }] },
+            options: { responsive: true, scales: { y: { beginAtZero: true, ticks: { color: '#fff' } }, x: { ticks: { color: '#fff' } } }, plugins: { legend: { labels: { color: '#fff' } } } }
+        });
+        new Chart(document.getElementById('pieChart'), {
+            type: 'pie', data: { labels: data.labels, datasets: [{ data: data.votes, backgroundColor: data.colors }] }, options: opts
+        });
+        new Chart(document.getElementById('doughnutChart'), {
+            type: 'doughnut', data: { labels: data.labels, datasets: [{ data: data.votes, backgroundColor: data.colors }] }, options: opts
+        });
+    });
+</script>
+{% endblock %}

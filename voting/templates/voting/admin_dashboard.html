@@ -1,0 +1,199 @@
+{% extends "voting/base.html" %}
+{% load static %}
+
+{% block title %}Admin Dashboard - Digital Voting Machine{% endblock %}
+{% block body_class %}evm-admin-body{% endblock %}
+
+{% block content %}
+<div class="evm-admin-wrapper">
+    <nav class="evm-sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <i class="fas fa-landmark"></i>
+            <span>EVM Admin</span>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="{% url 'voting:admin_dashboard' %}" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+            <li><a href="{% url 'voting:result_page' %}"><i class="fas fa-chart-bar"></i> Results</a></li>
+            <li><a href="{% url 'voting:export_pdf' %}"><i class="fas fa-file-pdf"></i> Export PDF</a></li>
+            <li><a href="{% url 'voting:export_excel' %}"><i class="fas fa-file-excel"></i> Export Excel</a></li>
+            <li><a href="{% url 'voting:print_result' %}" target="_blank"><i class="fas fa-print"></i> Print Result</a></li>
+            <li><a href="{% url 'voting:voting_page' %}"><i class="fas fa-vote-yea"></i> Voting Machine</a></li>
+            <li class="divider"></li>
+            <li><a href="#" data-bs-toggle="modal" data-bs-target="#resetModal"><i class="fas fa-redo text-danger"></i> Reset Election</a></li>
+            <li><a href="{% url 'voting:admin_logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </nav>
+
+    <main class="evm-main-content">
+        <div class="evm-topbar">
+            <button class="btn btn-sm btn-outline-secondary d-md-none" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h5 class="mb-0">Dashboard</h5>
+            <div class="d-flex align-items-center gap-3">
+                <span class="badge {% if machine_state.is_locked %}bg-danger{% else %}bg-success{% endif %} fs-6">
+                    {% if machine_state.is_locked %}LOCKED{% else %}READY{% endif %}
+                </span>
+                <span class="text-muted" id="live-clock"></span>
+            </div>
+        </div>
+
+        {% if messages %}
+        {% for msg in messages %}
+        <div class="alert alert-{{ msg.tags }} alert-dismissible fade show">
+            {{ msg }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <div class="row g-3 mb-4" style="padding:0 1.5rem;">
+            <div class="col-6 col-lg-3">
+                <div class="evm-stat-card">
+                    <div class="stat-icon bg-primary"><i class="fas fa-users"></i></div>
+                    <div><h3>{{ total_votes }}</h3><p>Total Votes</p></div>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="evm-stat-card">
+                    <div class="stat-icon bg-success"><i class="fas fa-user-check"></i></div>
+                    <div><h3>{{ total_students }}</h3><p>Total Students</p></div>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="evm-stat-card">
+                    <div class="stat-icon bg-warning"><i class="fas fa-trophy"></i></div>
+                    <div><h3>{% if winner %}{{ winner.vote_count }}{% else %}0{% endif %}</h3><p>Winner Votes</p></div>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="evm-stat-card">
+                    <div class="stat-icon bg-info"><i class="fas fa-medal"></i></div>
+                    <div><h3 class="fs-6">{% if winner %}{{ winner.name }}{% else %}N/A{% endif %}</h3><p>Leader</p></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-3" style="padding:0 1.5rem;">
+            <div class="col-lg-8">
+                <div class="evm-card">
+                    <div class="evm-card-header">
+                        <h6><i class="fas fa-chart-bar me-2"></i>Votes Per Symbol</h6>
+                    </div>
+                    <div class="evm-card-body">
+                        <div class="table-responsive">
+                            <table class="table table-dark table-hover align-middle mb-0">
+                                <thead>
+                                    <tr><th>#</th><th>Symbol</th><th>Votes</th><th>%</th><th>Bar</th></tr>
+                                </thead>
+                                <tbody>
+                                    {% for s in symbols %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td><img src="{% static s.image %}" alt="" style="width:35px;height:35px;" class="me-2">{{ s.name }}</td>
+                                        <td><strong>{{ s.vote_count }}</strong></td>
+                                        <td>{% widthratio s.vote_count total_votes 100 %}%</td>
+                                        <td style="min-width:120px;">
+                                            <div class="progress" style="height:8px;">
+                                                <div class="progress-bar bg-info" style="width:{% widthratio s.vote_count total_votes 100 %}%"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr><td colspan="5" class="text-center">No symbols.</td></tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="evm-card mb-3">
+                    <div class="evm-card-header"><h6><i class="fas fa-trophy me-2 text-warning"></i>Current Leader</h6></div>
+                    <div class="evm-card-body text-center">
+                        {% if winner %}
+                        <img src="{% static winner.image %}" alt="" style="width:80px;height:80px;" class="mb-2">
+                        <h4 class="text-warning">{{ winner.name }}</h4>
+                        <p class="text-muted">{{ winner.vote_count }} votes</p>
+                        {% else %}
+                        <p class="text-muted">No votes yet.</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="evm-card mb-3">
+                    <div class="evm-card-header"><h6><i class="fas fa-chart-pie me-2"></i>Distribution</h6></div>
+                    <div class="evm-card-body">
+                        <canvas id="pieChart" height="200"></canvas>
+                    </div>
+                </div>
+                <div class="evm-card">
+                    <div class="evm-card-header"><h6><i class="fas fa-clock me-2"></i>Recent Votes</h6></div>
+                    <div class="evm-card-body" style="max-height:200px;overflow-y:auto;">
+                        {% for v in recent_votes %}
+                        <div class="d-flex align-items-center mb-2 pb-2 border-bottom border-secondary">
+                            <img src="{% static v.symbol.image %}" alt="" style="width:30px;height:30px;" class="me-2">
+                            <div>
+                                <small class="text-info">{{ v.symbol.name }}</small><br>
+                                <small class="text-muted">{{ v.vote_time }}</small>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-muted text-center">No votes yet.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<div class="modal fade" id="resetModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content evm-modal">
+            <div class="modal-header border-0">
+                <h5 class="modal-title text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Reset Election</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>This will <strong>delete ALL votes</strong> and reset all vote counts to zero. This action cannot be undone.</p>
+                <p>Are you sure you want to reset?</p>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form method="post" action="{% url 'voting:reset_election' %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger"><i class="fas fa-redo me-1"></i>Reset Everything</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('show');
+}
+
+setInterval(function() {
+    var el = document.getElementById('live-clock');
+    if (el) el.textContent = new Date().toLocaleTimeString();
+}, 1000);
+
+fetch('{% url "voting:charts_data" %}')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.total_votes === 0) return;
+        new Chart(document.getElementById('pieChart'), {
+            type: 'doughnut',
+            data: {
+                labels: data.labels,
+                datasets: [{ data: data.votes, backgroundColor: data.colors }]
+            },
+            options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: '#fff', font: { size: 10 } } } } }
+        });
+    });
+</script>
+{% endblock %}

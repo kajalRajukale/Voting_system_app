@@ -1,0 +1,50 @@
+{% extends "voting/base.html" %}
+{% load static %}
+
+{% block title %}Admin Login - Digital Voting Machine{% endblock %}
+{% block body_class %}evm-login-body{% endblock %}
+
+{% block content %}
+<div class="evm-login-wrapper">
+    <div class="evm-login-card">
+        <div class="login-logo">
+            <i class="fas fa-shield-alt"></i>
+        </div>
+        <h2>ADMIN ACCESS</h2>
+        <p class="text-muted">Digital Voting Machine</p>
+
+        {% if form.errors %}
+        <div class="alert alert-danger">
+            <i class="fas fa-exclamation-circle me-1"></i>Invalid credentials.
+        </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                    {{ form.username }}
+                </div>
+            </div>
+            <div class="mb-4">
+                <label class="form-label">Password</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                    {{ form.password }}
+                </div>
+            </div>
+            <button type="submit" class="btn btn-evm-primary w-100 btn-lg">
+                <i class="fas fa-sign-in-alt me-1"></i>Login
+            </button>
+        </form>
+
+        <div class="text-center mt-3">
+            <a href="{% url 'voting:voting_page' %}" class="text-decoration-none evm-link">
+                <i class="fas fa-arrow-left me-1"></i>Back to Voting Machine
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

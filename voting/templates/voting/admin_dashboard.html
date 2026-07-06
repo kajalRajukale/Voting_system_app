@@ -77,29 +77,34 @@
             <div class="col-lg-8">
                 <div class="evm-card">
                     <div class="evm-card-header">
-                        <h6><i class="fas fa-chart-bar me-2"></i>Votes Per Symbol</h6>
+                        <h6><i class="fas fa-chart-bar me-2"></i>Votes Per Candidate</h6>
                     </div>
                     <div class="evm-card-body">
                         <div class="table-responsive">
                             <table class="table table-dark table-hover align-middle mb-0">
                                 <thead>
-                                    <tr><th>#</th><th>Symbol</th><th>Votes</th><th>%</th><th>Bar</th></tr>
+                                    <tr><th>#</th><th>Candidate</th><th>Votes</th><th>%</th><th>Bar</th></tr>
                                 </thead>
                                 <tbody>
-                                    {% for s in symbols %}
+                                    {% for c in candidates %}
                                     <tr>
                                         <td>{{ forloop.counter }}</td>
-                                        <td><img src="{% static s.image %}" alt="" style="width:35px;height:35px;" class="me-2">{{ s.name }}</td>
-                                        <td><strong>{{ s.vote_count }}</strong></td>
-                                        <td>{% widthratio s.vote_count total_votes 100 %}%</td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="{{ c.get_photo_url }}" alt="" class="admin-candidate-photo me-2">
+                                                <span>{{ c.name }}</span>
+                                            </div>
+                                        </td>
+                                        <td><strong>{{ c.vote_count }}</strong></td>
+                                        <td>{% widthratio c.vote_count total_votes 100 %}%</td>
                                         <td style="min-width:120px;">
                                             <div class="progress" style="height:8px;">
-                                                <div class="progress-bar bg-info" style="width:{% widthratio s.vote_count total_votes 100 %}%"></div>
+                                                <div class="progress-bar bg-info" style="width:{% widthratio c.vote_count total_votes 100 %}%"></div>
                                             </div>
                                         </td>
                                     </tr>
                                     {% empty %}
-                                    <tr><td colspan="5" class="text-center">No symbols.</td></tr>
+                                    <tr><td colspan="5" class="text-center">No candidates.</td></tr>
                                     {% endfor %}
                                 </tbody>
                             </table>
@@ -112,7 +117,7 @@
                     <div class="evm-card-header"><h6><i class="fas fa-trophy me-2 text-warning"></i>Current Leader</h6></div>
                     <div class="evm-card-body text-center">
                         {% if winner %}
-                        <img src="{% static winner.image %}" alt="" style="width:80px;height:80px;" class="mb-2">
+                        <img src="{{ winner.get_photo_url }}" alt="" class="admin-winner-photo mb-2">
                         <h4 class="text-warning">{{ winner.name }}</h4>
                         <p class="text-muted">{{ winner.vote_count }} votes</p>
                         {% else %}
@@ -131,9 +136,9 @@
                     <div class="evm-card-body" style="max-height:200px;overflow-y:auto;">
                         {% for v in recent_votes %}
                         <div class="d-flex align-items-center mb-2 pb-2 border-bottom border-secondary">
-                            <img src="{% static v.symbol.image %}" alt="" style="width:30px;height:30px;" class="me-2">
+                            <img src="{{ v.candidate.get_photo_url }}" alt="" class="admin-recent-photo me-2">
                             <div>
-                                <small class="text-info">{{ v.symbol.name }}</small><br>
+                                <small class="text-info">{{ v.candidate.name }}</small><br>
                                 <small class="text-muted">{{ v.vote_time }}</small>
                             </div>
                         </div>

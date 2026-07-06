@@ -80,6 +80,9 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# Default photo for candidates without a photo
+DEFAULT_CANDIDATE_PHOTO = '/static/images/default_avatar.jpg'
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = 'voting:admin_login'

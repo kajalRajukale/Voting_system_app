@@ -150,16 +150,16 @@ body.evm-body {
     50% { opacity: 0.5; transform: scale(1.3); }
 }
 
-/* ─── Symbol Cards ─── */
-.symbols-grid {
+/* ─── Candidate Cards ─── */
+.candidates-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 1rem;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
 }
 
-.symbol-card {
+.candidate-card {
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
     border-radius: 16px;
@@ -173,7 +173,7 @@ body.evm-body {
     -webkit-backdrop-filter: blur(10px);
 }
 
-.symbol-glow {
+.candidate-glow {
     position: absolute;
     top: -50%;
     left: -50%;
@@ -185,26 +185,26 @@ body.evm-body {
     pointer-events: none;
 }
 
-.symbol-card:hover .symbol-glow {
+.candidate-card:hover .candidate-glow {
     opacity: 1;
 }
 
-.symbol-card:hover {
+.candidate-card:hover {
     transform: translateY(-5px) scale(1.02);
     border-color: var(--evm-primary);
     box-shadow: 0 10px 40px rgba(67,97,238,0.2);
 }
 
-.symbol-card:active {
+.candidate-card:active {
     transform: scale(0.95);
 }
 
-.symbol-card.voting {
+.candidate-card.voting {
     pointer-events: none;
     opacity: 0.5;
 }
 
-.symbol-card.selected {
+.candidate-card.selected {
     border-color: var(--evm-success);
     box-shadow: 0 0 30px rgba(6,214,160,0.4);
     animation: selectedPulse 0.5s ease;
@@ -216,30 +216,42 @@ body.evm-body {
     100% { transform: scale(1); }
 }
 
-.symbol-img-wrapper {
-    width: 90px;
-    height: 90px;
+.candidate-photo-wrapper {
+    width: 180px;
+    height: 180px;
     margin: 0 auto 0.6rem;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--evm-primary);
+    box-shadow: 0 4px 15px rgba(67,97,238,0.3);
 }
 
-.symbol-img {
+.candidate-photo {
     width: 100%;
     height: 100%;
-    object-fit: contain;
-    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+    object-fit: cover;
     transition: transform 0.3s;
 }
 
-.symbol-card:hover .symbol-img {
+.candidate-card:hover .candidate-photo {
     transform: scale(1.1);
 }
 
-.symbol-name {
-    font-size: 0.8rem;
+.candidate-name {
+    display: block;
+    font-size: 0.85rem;
     font-weight: 600;
     color: var(--evm-text);
     letter-spacing: 1px;
     text-transform: uppercase;
+    margin-top: 0.5rem;
+}
+
+.candidate-name-marathi {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--evm-text-muted);
+    margin-top: 0.2rem;
 }
 
 /* ─── Locked Screen ─── */
@@ -712,18 +724,20 @@ body.evm-body {
     }
     .evm-sidebar.show { transform: translateX(0); }
     .evm-main-content { margin-left: 0; }
-    .symbols-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 0.8rem; }
+    .candidates-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 0.8rem; }
     .school-name { font-size: 1rem; letter-spacing: 1px; }
     .system-name { font-size: 0.6rem; letter-spacing: 2px; }
     .success-title { font-size: 1.3rem; }
     .btn-next-student { padding: 0.8rem 2rem; font-size: 1rem; }
     .evm-header { padding: 0.8rem 1rem; }
     .evm-main { padding: 1rem; }
+    .candidate-photo-wrapper { width: 130px; height: 130px; }
 }
 
 @media (max-width: 480px) {
-    .symbols-grid { grid-template-columns: repeat(3, 1fr); }
-    .symbol-img-wrapper { width: 60px; height: 60px; }
+    .candidates-grid { grid-template-columns: repeat(2, 1fr); }
+    .candidate-photo-wrapper { width: 110px; height: 110px; }
+    .candidate-name { font-size: 0.75rem; }
 }
 
 /* ─── Scrollbar ─── */
@@ -754,3 +768,35 @@ body.evm-body {
 
 .alert-danger { background: rgba(239,71,111,0.1); border-color: rgba(239,71,111,0.3); color: var(--evm-danger); }
 .alert-success { background: rgba(6,214,160,0.1); border-color: rgba(6,214,160,0.3); color: var(--evm-success); }
+
+/* ─── Admin Candidate Photos ─── */
+.admin-candidate-photo {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--evm-primary);
+}
+
+.admin-winner-photo {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--evm-warning);
+}
+
+.admin-recent-photo {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.result-candidate-photo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--evm-info);
+}

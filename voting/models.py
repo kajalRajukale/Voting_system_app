@@ -1,9 +1,10 @@
 from django.db import models
 
 
-class Symbol(models.Model):
+class Candidate(models.Model):
     name = models.CharField(max_length=100)
-    image = models.CharField(max_length=200, help_text='Static file path (e.g. symbols/star.svg)')
+    name_marathi = models.CharField(max_length=100, blank=True)
+    photo = models.ImageField(upload_to='candidates/', blank=True, null=True)
     vote_count = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -13,9 +14,14 @@ class Symbol(models.Model):
     def __str__(self):
         return self.name
 
+    def get_photo_url(self):
+        if self.photo:
+            return self.photo.url
+        return '/static/images/default_avatar.jpg'
+
 
 class Vote(models.Model):
-    symbol = models.ForeignKey(Symbol, on_delete=models.CASCADE, related_name='votes')
+    candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE, related_name='votes')
     vote_date = models.DateField(auto_now_add=True)
     vote_time = models.TimeField(auto_now_add=True)
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -24,7 +30,7 @@ class Vote(models.Model):
         ordering = ['-timestamp']
 
     def __str__(self):
-        return f"Vote for {self.symbol.name} at {self.vote_time}"
+        return f"Vote for {self.candidate.name} at {self.vote_time}"
 
 
 class MachineState(models.Model):

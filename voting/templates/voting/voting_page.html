@@ -37,17 +37,20 @@
         <div id="voting-section" class="{% if is_locked %}d-none{% endif %}">
             <div class="evm-instruction">
                 <div class="instruction-pulse"></div>
-                <span>TOUCH A SYMBOL TO CAST YOUR VOTE</span>
+                <span>TOUCH A CANDIDATE TO CAST YOUR VOTE</span>
             </div>
-            <div class="symbols-grid">
-                {% for symbol in symbols %}
-                <div class="symbol-card" data-id="{{ symbol.id }}" data-name="{{ symbol.name }}"
-                     onclick="castVote({{ symbol.id }}, '{{ symbol.name }}', '{% static symbol.image %}')">
-                    <div class="symbol-glow"></div>
-                    <div class="symbol-img-wrapper">
-                        <img src="{% static symbol.image %}" alt="{{ symbol.name }}" class="symbol-img" draggable="false">
+            <div class="candidates-grid">
+                {% for candidate in candidates %}
+                <div class="candidate-card" data-id="{{ candidate.id }}" data-name="{{ candidate.name }}"
+                     onclick="castVote({{ candidate.id }}, '{{ candidate.name }}')">
+                    <div class="candidate-glow"></div>
+                    <div class="candidate-photo-wrapper">
+                        <img src="{{ candidate.get_photo_url }}" alt="{{ candidate.name }}" class="candidate-photo" draggable="false">
                     </div>
-                    <span class="symbol-name">{{ symbol.name }}</span>
+                    <span class="candidate-name">{{ candidate.name }}</span>
+                    {% if candidate.name_marathi %}
+                    <span class="candidate-name-marathi">{{ candidate.name_marathi }}</span>
+                    {% endif %}
                 </div>
                 {% endfor %}
             </div>
@@ -90,7 +93,7 @@
     <div class="animation-content">
         <div class="ripple"></div>
         <i class="fas fa-check-circle"></i>
-        <p id="animation-symbol-name"></p>
+        <p id="animation-candidate-name"></p>
     </div>
 </div>
 {% endblock %}
@@ -99,18 +102,18 @@
 <script>
 let isVoting = false;
 
-function castVote(id, name, imgUrl) {
+function castVote(id, name) {
     if (isVoting) return;
     isVoting = true;
 
-    document.querySelectorAll('.symbol-card').forEach(c => c.classList.add('voting'));
-    document.querySelector('.symbol-card[data-id="' + id + '"]').classList.add('selected');
+    document.querySelectorAll('.candidate-card').forEach(c => c.classList.add('voting'));
+    document.querySelector('.candidate-card[data-id="' + id + '"]').classList.add('selected');
 
     $.ajax({
         url: '{% url "voting:cast_vote" %}',
         method: 'POST',
         data: {
-            'symbol_id': id,
+            'candidate_id': id,
             'csrfmiddlewaretoken': '{{ csrf_token }}'
         },
         success: function(resp) {
@@ -126,7 +129,7 @@ function castVote(id, name, imgUrl) {
         },
         error: function(xhr) {
             isVoting = false;
-            document.querySelectorAll('.symbol-card').forEach(c => {
+            document.querySelectorAll('.candidate-card').forEach(c => {
                 c.classList.remove('voting', 'selected');
             });
             if (xhr.responseJSON) {
@@ -138,7 +141,7 @@ function castVote(id, name, imgUrl) {
 
 function showVoteAnimation(name) {
     var anim = document.getElementById('vote-animation');
-    document.getElementById('animation-symbol-name').textContent = name;
+    document.getElementById('animation-candidate-name').textContent = name;
     anim.classList.remove('d-none');
     anim.classList.add('show');
     setTimeout(function() {
@@ -157,7 +160,7 @@ function nextStudent() {
                 document.getElementById('locked-section').classList.add('d-none');
                 document.getElementById('teacher-panel').classList.add('d-none');
                 document.getElementById('voting-section').classList.remove('d-none');
-                document.querySelectorAll('.symbol-card').forEach(c => {
+                document.querySelectorAll('.candidate-card').forEach(c => {
                     c.classList.remove('voting', 'selected');
                 });
                 var totalEl = document.querySelector('.progress-text');

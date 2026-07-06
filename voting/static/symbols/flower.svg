@@ -1,4 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
-  <circle cx="100" cy="100" r="90" fill="#E91E63"/>
-  <circle cx="100" cy="75" r="18" fill="white"/><circle cx="75" cy="60" r="18" fill="white"/><circle cx="125" cy="60" r="18" fill="white"/><circle cx="75" cy="90" r="18" fill="white"/><circle cx="125" cy="90" r="18" fill="white"/><circle cx="100" cy="75" r="12" fill="#FFEB3B"/><rect x="97" y="100" width="6" height="50" rx="3" fill="white"/>
-</svg>

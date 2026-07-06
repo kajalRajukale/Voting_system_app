@@ -13,16 +13,16 @@ from django.views.decorators.http import require_POST
 from django.db.models import Count, F, Max
 from django.db.models.functions import TruncDate
 
-from .models import Symbol, Vote, MachineState
+from .models import Candidate, Vote, MachineState
 from .forms import AdminLoginForm
 
 
 def voting_page(request):
     state = MachineState.get_instance()
-    symbols = Symbol.objects.all()
+    candidates = Candidate.objects.all()
     total_votes = Vote.objects.count()
     return render(request, 'voting/voting_page.html', {
-        'symbols': symbols,
+        'candidates': candidates,
         'is_locked': state.is_locked,
         'total_votes': total_votes,
         'total_students': state.total_students,
@@ -36,14 +36,14 @@ def cast_vote(request):
     if state.is_locked:
         return JsonResponse({'success': False, 'message': 'Machine is locked. Wait for teacher.'}, status=400)
 
-    symbol_id = request.POST.get('symbol_id')
-    if not symbol_id:
+    candidate_id = request.POST.get('candidate_id')
+    if not candidate_id:
         return JsonResponse({'success': False, 'message': 'Invalid request.'}, status=400)
 
-    symbol = get_object_or_404(Symbol, pk=symbol_id)
+    candidate = get_object_or_404(Candidate, pk=candidate_id)
 
-    Vote.objects.create(symbol=symbol)
-    Symbol.objects.filter(pk=symbol.id).update(vote_count=F('vote_count') + 1)
+    Vote.objects.create(candidate=candidate)
+    Candidate.objects.filter(pk=candidate.id).update(vote_count=F('vote_count') + 1)
 
     state.is_locked = True
     state.save()
@@ -51,7 +51,7 @@ def cast_vote(request):
     return JsonResponse({
         'success': True,
         'message': 'Vote recorded!',
-        'symbol_name': symbol.name,
+        'candidate_name': candidate.name,
     })
 
 
@@ -98,10 +98,10 @@ def admin_logout_view(request):
 
 @login_required
 def admin_dashboard(request):
-    symbols = Symbol.objects.all().order_by('-vote_count')
+    candidates = Candidate.objects.all().order_by('-vote_count')
     total_votes = Vote.objects.count()
     state = MachineState.get_instance()
-    winner = symbols.first() if total_votes > 0 else None
+    winner = candidates.first() if total_votes > 0 else None
 
     votes_by_date = (
         Vote.objects.annotate(date=TruncDate('timestamp'))
@@ -110,10 +110,10 @@ def admin_dashboard(request):
         .order_by('date')
     )
 
-    recent_votes = Vote.objects.select_related('symbol').all()[:20]
+    recent_votes = Vote.objects.select_related('candidate').all()[:20]
 
     context = {
-        'symbols': symbols,
+        'candidates': candidates,
         'total_votes': total_votes,
         'total_students': state.total_students,
         'winner': winner,
@@ -126,21 +126,21 @@ def admin_dashboard(request):
 
 @login_required
 def result_page(request):
-    symbols = Symbol.objects.all().order_by('-vote_count')
+    candidates = Candidate.objects.all().order_by('-vote_count')
     total_votes = Vote.objects.count()
-    winner = symbols.first() if total_votes > 0 else None
+    winner = candidates.first() if total_votes > 0 else None
 
-    symbol_data = []
-    for s in symbols:
-        pct = round((s.vote_count / total_votes * 100), 1) if total_votes > 0 else 0
-        symbol_data.append({
-            'symbol': s,
-            'votes': s.vote_count,
+    candidate_data = []
+    for c in candidates:
+        pct = round((c.vote_count / total_votes * 100), 1) if total_votes > 0 else 0
+        candidate_data.append({
+            'candidate': c,
+            'votes': c.vote_count,
             'percentage': pct,
         })
 
     context = {
-        'symbol_data': symbol_data,
+        'candidate_data': candidate_data,
         'total_votes': total_votes,
         'winner': winner,
     }
@@ -167,10 +167,10 @@ def export_pdf(request):
         elements.append(Spacer(1, 0.2 * inch))
 
         total_votes = Vote.objects.count()
-        data = [['Rank', 'Symbol', 'Votes', 'Percentage']]
-        for i, s in enumerate(Symbol.objects.all().order_by('-vote_count'), 1):
-            pct = f"{round(s.vote_count / total_votes * 100, 1)}%" if total_votes > 0 else "0%"
-            data.append([str(i), s.name, str(s.vote_count), pct])
+        data = [['Rank', 'Candidate', 'Votes', 'Percentage']]
+        for i, c in enumerate(Candidate.objects.all().order_by('-vote_count'), 1):
+            pct = f"{round(c.vote_count / total_votes * 100, 1)}%" if total_votes > 0 else "0%"
+            data.append([str(i), c.name, str(c.vote_count), pct])
 
         table = Table(data, colWidths=[1*inch, 2*inch, 1.5*inch, 1.5*inch])
         table.setStyle(TableStyle([
@@ -211,7 +211,7 @@ def export_excel(request):
         header_font = Font(bold=True, color="FFFFFF")
         header_fill = PatternFill(start_color="1a1a2e", end_color="1a1a2e", fill_type="solid")
 
-        headers = ['Rank', 'Symbol', 'Votes', 'Percentage']
+        headers = ['Rank', 'Candidate', 'Votes', 'Percentage']
         for col, header in enumerate(headers, 1):
             cell = ws.cell(row=1, column=col, value=header)
             cell.font = header_font
@@ -219,11 +219,11 @@ def export_excel(request):
             cell.alignment = Alignment(horizontal='center')
 
         total_votes = Vote.objects.count()
-        for row, s in enumerate(Symbol.objects.all().order_by('-vote_count'), 2):
-            pct = round(s.vote_count / total_votes * 100, 1) if total_votes > 0 else 0
+        for row, c in enumerate(Candidate.objects.all().order_by('-vote_count'), 2):
+            pct = round(c.vote_count / total_votes * 100, 1) if total_votes > 0 else 0
             ws.cell(row=row, column=1, value=row - 1)
-            ws.cell(row=row, column=2, value=s.name)
-            ws.cell(row=row, column=3, value=s.vote_count)
+            ws.cell(row=row, column=2, value=c.name)
+            ws.cell(row=row, column=3, value=c.vote_count)
             ws.cell(row=row, column=4, value=f"{pct}%")
 
         for col in range(1, 5):
@@ -243,14 +243,32 @@ def export_excel(request):
 
 @login_required
 def print_result(request):
-    return render(request, 'voting/print_result.html')
+    candidates = Candidate.objects.all().order_by('-vote_count')
+    total_votes = Vote.objects.count()
+    winner = candidates.first() if total_votes > 0 else None
+
+    candidate_data = []
+    for c in candidates:
+        pct = round((c.vote_count / total_votes * 100), 1) if total_votes > 0 else 0
+        candidate_data.append({
+            'candidate': c,
+            'votes': c.vote_count,
+            'percentage': pct,
+        })
+
+    context = {
+        'candidate_data': candidate_data,
+        'total_votes': total_votes,
+        'winner': winner,
+    }
+    return render(request, 'voting/print_result.html', context)
 
 
 @login_required
 @require_POST
 def reset_election(request):
     Vote.objects.all().delete()
-    Symbol.objects.all().update(vote_count=0)
+    Candidate.objects.all().update(vote_count=0)
     state = MachineState.get_instance()
     state.is_locked = False
     state.save()
@@ -260,11 +278,15 @@ def reset_election(request):
 
 @login_required
 def charts_data(request):
-    symbols = Symbol.objects.all().order_by('-vote_count')
+    candidates = Candidate.objects.all().order_by('-vote_count')
     total_votes = Vote.objects.count()
-    labels = [s.name for s in symbols]
-    votes_data = [s.vote_count for s in symbols]
+    labels = [c.name for c in candidates]
+    votes_data = [c.vote_count for c in candidates]
     colors = [
+        '#FFD700', '#8B4513', '#2196F3', '#FF9800', '#E91E63',
+        '#4CAF50', '#F44336', '#009688', '#FF5722', '#00BCD4',
+        '#3F51B5', '#9C27B0', '#FFC107', '#FF9800', '#607D8B',
+        '#3F51B5', '#F44336', '#E91E63', '#03A9F4', '#FFA07A',
         '#FFD700', '#8B4513', '#2196F3', '#FF9800', '#E91E63',
         '#4CAF50', '#F44336', '#009688', '#FF5722', '#00BCD4',
         '#3F51B5', '#9C27B0', '#FFC107', '#FF9800', '#607D8B',

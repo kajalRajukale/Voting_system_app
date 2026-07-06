@@ -1,4 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
-  <circle cx="100" cy="100" r="90" fill="#F44336"/>
-  <ellipse cx="100" cy="105" rx="55" ry="60" fill="white"/><path d="M100,40 Q115,25 105,20" stroke="white" stroke-width="4" fill="none"/><ellipse cx="85" cy="42" rx="12" ry="8" fill="white" opacity="0.5" transform="rotate(-30 85 42)"/>
-</svg>

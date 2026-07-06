@@ -30,7 +30,7 @@
         {% if winner %}
         <div class="winner-banner">
             <div class="winner-content">
-                <img src="{% static winner.image %}" alt="{{ winner.name }}" class="winner-img">
+                <img src="{{ winner.get_photo_url }}" alt="{{ winner.name }}" class="winner-img">
                 <div>
                     <h2 class="winner-name">{{ winner.name }}</h2>
                     <p class="winner-votes">{{ winner.vote_count }} votes | {% widthratio winner.vote_count total_votes 100 %}%</p>
@@ -50,10 +50,10 @@
                 <div class="table-responsive">
                     <table class="table table-dark table-hover align-middle mb-0">
                         <thead>
-                            <tr><th>Rank</th><th>Symbol</th><th>Name</th><th>Votes</th><th>Percentage</th><th>Progress</th></tr>
+                            <tr><th>Rank</th><th>Photo</th><th>Name</th><th>Votes</th><th>Percentage</th><th>Progress</th></tr>
                         </thead>
                         <tbody>
-                            {% for item in symbol_data %}
+                            {% for item in candidate_data %}
                             <tr>
                                 <td>
                                     {% if forloop.counter == 1 %}<span class="badge bg-warning text-dark">1st</span>
@@ -61,8 +61,8 @@
                                     {% elif forloop.counter == 3 %}<span class="badge bg-info">3rd</span>
                                     {% else %}{{ forloop.counter }}{% endif %}
                                 </td>
-                                <td><img src="{% static item.symbol.image %}" alt="" style="width:40px;height:40px;"></td>
-                                <td>{{ item.symbol.name }}</td>
+                                <td><img src="{{ item.candidate.get_photo_url }}" alt="" class="result-candidate-photo"></td>
+                                <td>{{ item.candidate.name }}</td>
                                 <td><strong>{{ item.votes }}</strong></td>
                                 <td>{{ item.percentage }}%</td>
                                 <td style="min-width:150px;">

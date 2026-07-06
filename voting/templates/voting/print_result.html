@@ -12,6 +12,7 @@
         th, td { border: 1px solid #333; padding: 8px 12px; text-align: center; }
         th { background: #1a1a2e; color: white; }
         .winner { background: #fff3cd; font-weight: bold; }
+        .print-photo { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
         @media print { .no-print { display: none; } }
     </style>
 </head>
@@ -28,20 +29,21 @@
 
     <table>
         <thead>
-            <tr><th>Rank</th><th>Symbol</th><th>Votes</th><th>Percentage</th></tr>
+            <tr><th>Rank</th><th>Photo</th><th>Candidate</th><th>Votes</th><th>Percentage</th></tr>
         </thead>
         <tbody>
-            {% for item in symbol_data %}
+            {% for item in candidate_data %}
             <tr{% if forloop.counter == 1 %} class="winner"{% endif %}>
                 <td>{{ forloop.counter }}</td>
-                <td>{{ item.symbol.name }}</td>
+                <td><img src="{{ item.candidate.get_photo_url }}" alt="" class="print-photo"></td>
+                <td>{{ item.candidate.name }}</td>
                 <td>{{ item.votes }}</td>
                 <td>{{ item.percentage }}%</td>
             </tr>
             {% endfor %}
         </tbody>
         <tfoot>
-            <tr><td colspan="2"><strong>Total Votes</strong></td><td colspan="2"><strong>{{ total_votes }}</strong></td></tr>
+            <tr><td colspan="3"><strong>Total Votes</strong></td><td colspan="2"><strong>{{ total_votes }}</strong></td></tr>
         </tfoot>
     </table>
 

@@ -5,6 +5,7 @@ class Candidate(models.Model):
     name = models.CharField(max_length=100)
     name_marathi = models.CharField(max_length=100, blank=True)
     photo = models.ImageField(upload_to='candidates/', blank=True, null=True)
+    symbol_image = models.CharField(max_length=200, blank=True, help_text='Static file path (e.g. symbols/surya.svg)')
     vote_count = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -17,6 +18,11 @@ class Candidate(models.Model):
     def get_photo_url(self):
         if self.photo:
             return self.photo.url
+        return '/static/images/default_avatar.jpg'
+
+    def get_symbol_url(self):
+        if self.symbol_image:
+            return f'/static/{self.symbol_image}'
         return '/static/images/default_avatar.jpg'
 
 

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="pencilGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFC107;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFB300;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <g transform="rotate(-30 100 100)">
+    <!-- Pencil body -->
+    <rect x="85" y="30" width="30" height="120" fill="url(#pencilGrad)" stroke="#E6A800" stroke-width="1" />
+    
+    <!-- Pencil stripes -->
+    <line x1="90" y1="30" x2="90" y2="150" stroke="#E6A800" stroke-width="1" />
+    <line x1="110" y1="30" x2="110" y2="150" stroke="#E6A800" stroke-width="1" />
+    
+    <!-- Metal ferrule -->
+    <rect x="82" y="145" width="36" height="15" fill="#C0C0C0" stroke="#A0A0A0" stroke-width="1" />
+    
+    <!-- Eraser -->
+    <rect x="85" y="155" width="30" height="20" rx="3" ry="3" fill="#FF69B4" stroke="#FF1493" stroke-width="1" />
+    
+    <!-- Pencil tip -->
+    <polygon points="85,30 115,30 100,5" fill="#FFDAB9" stroke="#DEB887" stroke-width="1" />
+    
+    <!-- Graphite tip -->
+    <polygon points="95,15 105,15 100,0" fill="#333333" />
+  </g>
+</svg>

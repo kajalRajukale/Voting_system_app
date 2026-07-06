@@ -12,8 +12,8 @@
             <span>EVM Admin</span>
         </div>
         <ul class="sidebar-menu">
-            <li><a href="{% url 'voting:admin_dashboard' %}" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-            <li><a href="{% url 'voting:result_page' %}"><i class="fas fa-chart-bar"></i> Results</a></li>
+            <li><a href="{% url 'voting:admin_dashboard' %}" class="active"><i class="fas fa-th-large"></i> Dashboard</a></li>
+            <li><a href="{% url 'voting:result_page' %}"><i class="fas fa-chart-pie"></i> Results</a></li>
             <li><a href="{% url 'voting:export_pdf' %}"><i class="fas fa-file-pdf"></i> Export PDF</a></li>
             <li><a href="{% url 'voting:export_excel' %}"><i class="fas fa-file-excel"></i> Export Excel</a></li>
             <li><a href="{% url 'voting:print_result' %}" target="_blank"><i class="fas fa-print"></i> Print Result</a></li>
@@ -40,13 +40,13 @@
 
         {% if messages %}
         {% for msg in messages %}
-        <div class="alert alert-{{ msg.tags }} alert-dismissible fade show">
+        <div class="alert alert-{{ msg.tags }} alert-dismissible fade show" style="margin: 1rem 2rem 0;">
             {{ msg }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
         {% endfor %}
         {% endif %}
 
-        <div class="row g-3 mb-4" style="padding:0 1.5rem;">
+        <div class="row g-3 mb-4" style="padding:0 2rem; margin-top:1.5rem;">
             <div class="col-6 col-lg-3">
                 <div class="evm-stat-card">
                     <div class="stat-icon bg-primary"><i class="fas fa-users"></i></div>
@@ -73,7 +73,7 @@
             </div>
         </div>
 
-        <div class="row g-3" style="padding:0 1.5rem;">
+        <div class="row g-3" style="padding:0 2rem; margin-bottom:2rem;">
             <div class="col-lg-8">
                 <div class="evm-card">
                     <div class="evm-card-header">
@@ -81,7 +81,7 @@
                     </div>
                     <div class="evm-card-body">
                         <div class="table-responsive">
-                            <table class="table table-dark table-hover align-middle mb-0">
+                            <table class="table table-hover align-middle mb-0">
                                 <thead>
                                     <tr><th>#</th><th>Candidate</th><th>Votes</th><th>%</th><th>Bar</th></tr>
                                 </thead>
@@ -91,15 +91,15 @@
                                         <td>{{ forloop.counter }}</td>
                                         <td>
                                             <div class="d-flex align-items-center">
-                                                <img src="{{ c.get_photo_url }}" alt="" class="admin-candidate-photo me-2">
+                                                <img src="{% static c.symbol_image %}" alt="" class="admin-symbol me-2">
                                                 <span>{{ c.name }}</span>
                                             </div>
                                         </td>
                                         <td><strong>{{ c.vote_count }}</strong></td>
                                         <td>{% widthratio c.vote_count total_votes 100 %}%</td>
                                         <td style="min-width:120px;">
-                                            <div class="progress" style="height:8px;">
-                                                <div class="progress-bar bg-info" style="width:{% widthratio c.vote_count total_votes 100 %}%"></div>
+                                            <div class="progress">
+                                                <div class="progress-bar" style="width:{% widthratio c.vote_count total_votes 100 %}%"></div>
                                             </div>
                                         </td>
                                     </tr>
@@ -117,7 +117,7 @@
                     <div class="evm-card-header"><h6><i class="fas fa-trophy me-2 text-warning"></i>Current Leader</h6></div>
                     <div class="evm-card-body text-center">
                         {% if winner %}
-                        <img src="{{ winner.get_photo_url }}" alt="" class="admin-winner-photo mb-2">
+                        <img src="{% static winner.symbol_image %}" alt="" class="admin-winner-symbol mb-2">
                         <h4 class="text-warning">{{ winner.name }}</h4>
                         <p class="text-muted">{{ winner.vote_count }} votes</p>
                         {% else %}
@@ -135,10 +135,10 @@
                     <div class="evm-card-header"><h6><i class="fas fa-clock me-2"></i>Recent Votes</h6></div>
                     <div class="evm-card-body" style="max-height:200px;overflow-y:auto;">
                         {% for v in recent_votes %}
-                        <div class="d-flex align-items-center mb-2 pb-2 border-bottom border-secondary">
-                            <img src="{{ v.candidate.get_photo_url }}" alt="" class="admin-recent-photo me-2">
+                        <div class="d-flex align-items-center mb-2 pb-2" style="border-bottom: 1px solid var(--admin-border);">
+                            <img src="{% static v.candidate.symbol_image %}" alt="" class="admin-recent-symbol me-2">
                             <div>
-                                <small class="text-info">{{ v.candidate.name }}</small><br>
+                                <small class="text-primary fw-bold">{{ v.candidate.name }}</small><br>
                                 <small class="text-muted">{{ v.vote_time }}</small>
                             </div>
                         </div>
@@ -157,7 +157,7 @@
         <div class="modal-content evm-modal">
             <div class="modal-header border-0">
                 <h5 class="modal-title text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Reset Election</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <p>This will <strong>delete ALL votes</strong> and reset all vote counts to zero. This action cannot be undone.</p>
@@ -197,7 +197,20 @@ fetch('{% url "voting:charts_data" %}')
                 labels: data.labels,
                 datasets: [{ data: data.votes, backgroundColor: data.colors }]
             },
-            options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: '#fff', font: { size: 10 } } } } }
+            options: { 
+                responsive: true, 
+                plugins: { 
+                    legend: { 
+                        position: 'bottom', 
+                        labels: { 
+                            color: '#64748B', 
+                            font: { size: 11 },
+                            padding: 12,
+                            usePointStyle: true
+                        } 
+                    } 
+                } 
+            }
         });
     });
 </script>

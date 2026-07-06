@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="tableGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#DEB887;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#D2B48C;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#C4A574;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Table top -->
+  <rect x="20" y="60" width="160" height="15" rx="3" ry="3" fill="url(#tableGrad)" stroke="#A0522D" stroke-width="2" />
+  
+  <!-- Table top edge -->
+  <rect x="20" y="72" width="160" height="5" fill="#C4A574" />
+  
+  <!-- Table legs -->
+  <rect x="30" y="77" width="12" height="90" fill="url(#tableGrad)" stroke="#A0522D" stroke-width="1" />
+  <rect x="158" y="77" width="12" height="90" fill="url(#tableGrad)" stroke="#A0522D" stroke-width="1" />
+  
+  <!-- Cross supports -->
+  <line x1="42" y1="120" x2="158" y2="120" stroke="#A0522D" stroke-width="4" />
+  <line x1="42" y1="120" x2="100" y2="150" stroke="#A0522D" stroke-width="3" />
+  <line x1="158" y1="120" x2="100" y2="150" stroke="#A0522D" stroke-width="3" />
+  
+  <!-- Wood grain on top -->
+  <line x1="30" y1="65" x2="170" y2="65" stroke="#A0522D" stroke-width="1" opacity="0.3" />
+  <line x1="30" y1="68" x2="170" y2="68" stroke="#A0522D" stroke-width="1" opacity="0.3" />
+  
+  <!-- Table feet -->
+  <rect x="28" y="165" width="16" height="5" rx="2" ry="2" fill="#8B4513" />
+  <rect x="156" y="165" width="16" height="5" rx="2" ry="2" fill="#8B4513" />
+</svg>

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="starGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFA500;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Star glow -->
+  <circle cx="100" cy="100" r="70" fill="#FFD700" opacity="0.3" />
+  
+  <!-- 5-pointed star -->
+  <polygon points="100,20 115,75 175,75 125,110 145,165 100,135 55,165 75,110 25,75 85,75" 
+           fill="url(#starGrad)" stroke="#B8860B" stroke-width="2" filter="url(#glow)" />
+  
+  <!-- Star center highlight -->
+  <circle cx="100" cy="95" r="15" fill="#FFFF00" opacity="0.5" />
+</svg>

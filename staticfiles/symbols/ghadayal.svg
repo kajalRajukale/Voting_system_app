@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="watchGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#C0C0C0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#808080;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Watch strap top -->
+  <rect x="85" y="15" width="30" height="45" rx="5" ry="5" fill="#4169E1" stroke="#1E3A8A" stroke-width="2" />
+  
+  <!-- Watch strap bottom -->
+  <rect x="85" y="140" width="30" height="45" rx="5" ry="5" fill="#4169E1" stroke="#1E3A8A" stroke-width="2" />
+  
+  <!-- Watch case -->
+  <circle cx="100" cy="100" r="45" fill="url(#watchGrad)" stroke="#606060" stroke-width="3" />
+  
+  <!-- Watch face -->
+  <circle cx="100" cy="100" r="38" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="2" />
+  
+  <!-- Hour markers -->
+  <line x1="100" y1="65" x2="100" y2="72" stroke="#333333" stroke-width="3" />
+  <line x1="100" y1="128" x2="100" y2="135" stroke="#333333" stroke-width="3" />
+  <line x1="65" y1="100" x2="72" y2="100" stroke="#333333" stroke-width="3" />
+  <line x1="128" y1="100" x2="135" y2="100" stroke="#333333" stroke-width="3" />
+  
+  <!-- Small hour markers -->
+  <circle cx="100" cy="68" r="2" fill="#333333" />
+  <circle cx="100" cy="132" r="2" fill="#333333" />
+  <circle cx="68" cy="100" r="2" fill="#333333" />
+  <circle cx="132" cy="100" r="2" fill="#333333" />
+  
+  <!-- Watch hands -->
+  <line x1="100" y1="100" x2="100" y2="75" stroke="#333333" stroke-width="3" stroke-linecap="round" />
+  <line x1="100" y1="100" x2="118" y2="90" stroke="#333333" stroke-width="2" stroke-linecap="round" />
+  
+  <!-- Center dot -->
+  <circle cx="100" cy="100" r="4" fill="#FF4500" />
+  
+  <!-- Crown -->
+  <rect x="145" y="95" width="10" height="10" rx="2" ry="2" fill="#C0C0C0" stroke="#808080" stroke-width="1" />
+</svg>

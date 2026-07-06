@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="laptopGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2F2F2F;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1A1A1A;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="screenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4169E1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1E3A8A;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Laptop screen -->
+  <rect x="30" y="30" width="140" height="90" rx="5" ry="5" fill="url(#laptopGrad)" stroke="#404040" stroke-width="2" />
+  
+  <!-- Screen display -->
+  <rect x="38" y="38" width="124" height="74" rx="3" ry="3" fill="url(#screenGrad)" />
+  
+  <!-- Screen glare -->
+  <ellipse cx="70" cy="60" rx="25" ry="15" fill="#FFFFFF" opacity="0.1" />
+  
+  <!-- Camera -->
+  <circle cx="100" cy="34" r="3" fill="#404040" />
+  <circle cx="100" cy="34" r="1.5" fill="#2F2F2F" />
+  
+  <!-- Laptop base -->
+  <rect x="20" y="120" width="160" height="10" rx="2" ry="2" fill="url(#laptopGrad)" stroke="#404040" stroke-width="1" />
+  
+  <!-- Keyboard -->
+  <rect x="35" y="122" width="130" height="6" rx="1" ry="1" fill="#3A3A3A" />
+  
+  <!-- Keyboard keys -->
+  <rect x="40" y="123" width="8" height="4" rx="1" ry="1" fill="#4A4A4A" />
+  <rect x="52" y="123" width="8" height="4" rx="1" ry="1" fill="#4A4A4A" />
+  <rect x="64" y="123" width="8" height="4" rx="1" ry="1" fill="#4A4A4A" />
+  <rect x="76" y="123" width="8" height="4" rx="1" ry="1" fill="#4A4A4A" />
+  <rect x="88" y="123" width="8" height="4" rx="1" ry="1" fill="#4A4A4A" />
+  <rect x="100" y="123" width="8" height="4" rx="1" ry="1" fill="#4A4A4A" />
+  <rect x="112" y="123" width="8" height="4" rx="1" ry="1" fill="#4A4A4A" />
+  <rect x="124" y="123" width="8" height="4" rx="1" ry="1" fill="#4A4A4A" />
+  <rect x="136" y="123" width="8" height="4" rx="1" ry="1" fill="#4A4A4A" />
+  <rect x="148" y="123" width="8" height="4" rx="1" ry="1" fill="#4A4A4A" />
+  
+  <!-- Touchpad -->
+  <rect x="80" y="132" width="40" height="25" rx="3" ry="3" fill="#3A3A3A" stroke="#4A4A4A" stroke-width="1" />
+  
+  <!-- Screen hinge -->
+  <rect x="85" y="118" width="30" height="4" rx="2" ry="2" fill="#505050" />
+</svg>

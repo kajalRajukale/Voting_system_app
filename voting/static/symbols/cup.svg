@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="cupGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#F5F5F5;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E8E8E8;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="saucerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#E0E0E0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#C0C0C0;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Saucer -->
+  <ellipse cx="100" cy="155" rx="65" ry="15" fill="url(#saucerGrad)" stroke="#A0A0A0" stroke-width="2" />
+  <ellipse cx="100" cy="152" rx="55" ry="12" fill="#F0F0F0" />
+  
+  <!-- Cup body -->
+  <path d="M55,80 L60,140 Q100,155 140,140 L145,80 Z" fill="url(#cupGrad)" stroke="#C0C0C0" stroke-width="2" />
+  
+  <!-- Cup rim -->
+  <ellipse cx="100" cy="80" rx="45" ry="12" fill="#FFFFFF" stroke="#C0C0C0" stroke-width="2" />
+  
+  <!-- Cup inner -->
+  <ellipse cx="100" cy="82" rx="40" ry="10" fill="#E8E8E8" />
+  
+  <!-- Handle -->
+  <path d="M145,95 Q175,95 175,120 Q175,145 145,145" fill="none" stroke="#C0C0C0" stroke-width="8" stroke-linecap="round" />
+  <path d="M145,100 Q168,100 168,120 Q168,140 145,140" fill="none" stroke="#E8E8E8" stroke-width="4" />
+  
+  <!-- Steam -->
+  <path d="M80,65 Q75,50 80,35" fill="none" stroke="#C0C0C0" stroke-width="2" opacity="0.5" />
+  <path d="M100,60 Q95,45 100,30" fill="none" stroke="#C0C0C0" stroke-width="2" opacity="0.5" />
+  <path d="M120,65 Q115,50 120,35" fill="none" stroke="#C0C0C0" stroke-width="2" opacity="0.5" />
+</svg>

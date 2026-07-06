@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="spoonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#E8E8E8;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#C0C0C0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#A9A9A9;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Spoon bowl -->
+  <ellipse cx="100" cy="60" rx="35" ry="25" fill="url(#spoonGrad)" stroke="#808080" stroke-width="2" />
+  
+  <!-- Spoon bowl inner -->
+  <ellipse cx="100" cy="58" rx="28" ry="18" fill="#D3D3D3" />
+  
+  <!-- Reflection -->
+  <ellipse cx="90" cy="52" rx="10" ry="6" fill="#FFFFFF" opacity="0.4" transform="rotate(-20 90 52)" />
+  
+  <!-- Spoon handle -->
+  <path d="M100,85 Q100,120 100,170" fill="none" stroke="url(#spoonGrad)" stroke-width="12" stroke-linecap="round" />
+  
+  <!-- Handle edge -->
+  <path d="M100,85 Q100,120 100,170" fill="none" stroke="#A9A9A9" stroke-width="2" stroke-linecap="round" />
+  
+  <!-- Handle decoration -->
+  <ellipse cx="100" cy="150" rx="8" ry="4" fill="#D3D3D3" />
+  <ellipse cx="100" cy="160" rx="6" ry="3" fill="#D3D3D3" />
+</svg>

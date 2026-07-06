@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <linearGradient id="moonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFE066;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFD93D;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F4C430;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="moonShine" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFF5CC;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#FFE066;stop-opacity:0" />
+    </linearGradient>
+    <radialGradient id="cheekGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#FF9999;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#FF6666;stop-opacity:0" />
+    </radialGradient>
+    <radialGradient id="starGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFD93D;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#FFD93D;stop-opacity:0" />
+    </radialGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.15"/>
+    </filter>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Fluffy clouds -->
+  <g opacity="0.9">
+    <ellipse cx="80" cy="300" rx="50" ry="30" fill="white" opacity="0.8"/>
+    <ellipse cx="55" cy="295" rx="35" ry="25" fill="white" opacity="0.9"/>
+    <ellipse cx="105" cy="295" rx="40" ry="28" fill="white" opacity="0.85"/>
+    <ellipse cx="80" cy="285" rx="45" ry="22" fill="white" opacity="0.95"/>
+  </g>
+  
+  <g opacity="0.85">
+    <ellipse cx="320" cy="330" rx="45" ry="28" fill="white" opacity="0.8"/>
+    <ellipse cx="298" cy="325" rx="32" ry="22" fill="white" opacity="0.9"/>
+    <ellipse cx="342" cy="325" rx="38" ry="26" fill="white" opacity="0.85"/>
+    <ellipse cx="320" cy="316" rx="42" ry="20" fill="white" opacity="0.95"/>
+  </g>
+  
+  <g opacity="0.8">
+    <ellipse cx="100" cy="100" rx="35" ry="22" fill="white" opacity="0.7"/>
+    <ellipse cx="82" cy="96" rx="25" ry="18" fill="white" opacity="0.8"/>
+    <ellipse cx="118" cy="96" rx="28" ry="20" fill="white" opacity="0.75"/>
+    <ellipse cx="100" cy="89" rx="30" ry="16" fill="white" opacity="0.85"/>
+  </g>
+  
+  <!-- Stars with glow -->
+  <g filter="url(#glow)">
+    <circle cx="60" cy="180" r="6" fill="url(#starGlow)"/>
+    <circle cx="340" cy="150" r="8" fill="url(#starGlow)"/>
+    <circle cx="310" cy="60" r="5" fill="url(#starGlow)"/>
+    <circle cx="90" cy="60" r="7" fill="url(#starGlow)"/>
+    <circle cx="50" cy="250" r="5" fill="url(#starGlow)"/>
+    <circle cx="350" cy="250" r="6" fill="url(#starGlow)"/>
+    <circle cx="330" cy="100" r="4" fill="url(#starGlow)"/>
+    <circle cx="70" cy="140" r="5" fill="url(#starGlow)"/>
+  </g>
+  
+  <!-- Four-point stars -->
+  <g filter="url(#glow)" opacity="0.9">
+    <polygon points="350,200 354,210 364,210 356,216 358,226 350,220 342,226 344,216 336,210 346,210" fill="#FFD93D"/>
+    <polygon points="55,120 58,127 65,127 59,131 61,138 55,134 49,138 51,131 45,127 52,127" fill="#FFD93D"/>
+    <polygon points="280,40 283,47 290,47 284,51 286,58 280,54 274,58 276,51 270,47 277,47" fill="#FFD93D"/>
+  </g>
+  
+  <!-- Main crescent moon body -->
+  <g filter="url(#softShadow)">
+    <path d="M200,50 A130,130 0 1,1 200,350 A97,97 0 1,0 200,50" fill="url(#moonGrad)"/>
+  </g>
+  
+  <!-- Moon shine highlight -->
+  <path d="M200,70 A115,115 0 1,1 200,330 A85,85 0 1,0 200,70" fill="url(#moonShine)" opacity="0.4"/>
+  
+  <!-- Cute face - closed happy eyes -->
+  <g>
+    <!-- Left eye (curved line for happy closed eye) -->
+    <path d="M155,185 Q170,170 185,185" stroke="#8B6914" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <!-- Right eye (curved line for happy closed eye) -->
+    <path d="M205,185 Q220,170 235,185" stroke="#8B6914" stroke-width="5" fill="none" stroke-linecap="round"/>
+    
+    <!-- Eyelashes left -->
+    <line x1="155" y1="185" x2="150" y2="178" stroke="#8B6914" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="170" y1="175" x2="168" y2="168" stroke="#8B6914" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="185" y1="185" x2="190" y2="178" stroke="#8B6914" stroke-width="2.5" stroke-linecap="round"/>
+    
+    <!-- Eyelashes right -->
+    <line x1="205" y1="185" x2="200" y2="178" stroke="#8B6914" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="220" y1="175" x2="218" y2="168" stroke="#8B6914" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="235" y1="185" x2="240" y2="178" stroke="#8B6914" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Rosy cheeks -->
+  <circle cx="145" cy="215" r="18" fill="url(#cheekGrad)"/>
+  <circle cx="245" cy="215" r="18" fill="url(#cheekGrad)"/>
+  
+  <!-- Cute smile -->
+  <path d="M175,230 Q200,260 225,230" stroke="#8B6914" stroke-width="5" fill="none" stroke-linecap="round"/>
+  
+  <!-- Tiny sparkle on cheek -->
+  <circle cx="140" cy="208" r="3" fill="white" opacity="0.7"/>
+  <circle cx="250" cy="208" r="3" fill="white" opacity="0.7"/>
+</svg>

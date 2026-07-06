@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="cabinetGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8B4513;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#A0522D;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6B3410;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Cabinet body -->
+  <rect x="40" y="30" width="120" height="140" rx="5" ry="5" fill="url(#cabinetGrad)" stroke="#5D3A1A" stroke-width="3" />
+  
+  <!-- Left door -->
+  <rect x="45" y="35" width="55" height="130" fill="#A0522D" stroke="#5D3A1A" stroke-width="2" />
+  
+  <!-- Right door -->
+  <rect x="100" y="35" width="55" height="130" fill="#A0522D" stroke="#5D3A1A" stroke-width="2" />
+  
+  <!-- Door panels -->
+  <rect x="50" y="40" width="45" height="55" rx="3" ry="3" fill="#8B4513" stroke="#6B3410" stroke-width="1" />
+  <rect x="50" y="100" width="45" height="60" rx="3" ry="3" fill="#8B4513" stroke="#6B3410" stroke-width="1" />
+  <rect x="105" y="40" width="45" height="55" rx="3" ry="3" fill="#8B4513" stroke="#6B3410" stroke-width="1" />
+  <rect x="105" y="100" width="45" height="60" rx="3" ry="3" fill="#8B4513" stroke="#6B3410" stroke-width="1" />
+  
+  <!-- Door handles -->
+  <circle cx="92" cy="100" r="5" fill="#FFD700" stroke="#B8860B" stroke-width="1" />
+  <circle cx="108" cy="100" r="5" fill="#FFD700" stroke="#B8860B" stroke-width="1" />
+  
+  <!-- Top molding -->
+  <rect x="35" y="25" width="130" height="10" rx="2" ry="2" fill="#6B3410" />
+  
+  <!-- Base -->
+  <rect x="35" y="170" width="130" height="8" rx="2" ry="2" fill="#6B3410" />
+  
+  <!-- Feet -->
+  <rect x="45" y="175" width="15" height="8" rx="2" ry="2" fill="#5D3A1A" />
+  <rect x="140" y="175" width="15" height="8" rx="2" ry="2" fill="#5D3A1A" />
+</svg>
